@@ -1,0 +1,60 @@
+{% extends 'notes/base.html' %}
+
+{% block content %}
+
+    <h1>My Notes</h1>
+
+    <form method="POST">
+
+        {% csrf_token %}
+
+        <input 
+            type="text" 
+            name="title"
+            class="form-control"
+        >
+
+        <textarea
+            name="content"
+            class="form-control"
+        ></textarea>
+
+        <button type="submit"  class="btn btn-primary mt-2"
+        >
+            Add Note
+        </button>
+
+    </form>
+
+    <ul class="list-group">
+
+        {% for note in notes %}
+
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                <div>
+                    <p> {{ note.title }} </p>
+                    <p> {{ note.content }} </p>
+                    <p> {{ note.created_at }} </p>
+                </div>
+                <div class="d-flex gap-2">
+                    <a href="/edit/{{ note.id }}/">
+                        Edit
+                    </a>
+
+                    <form action="/delete/{{ note.id }}/" method="POST">
+
+                        {% csrf_token %}
+
+                        <button type="submit">
+                            Delete
+                        </button>
+
+                    </form>
+                </div>
+            </li>
+
+        {% endfor %}
+
+    </ul>
+
+{% endblock %}
