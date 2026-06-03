@@ -17,6 +17,22 @@
                 <span class="navbar-brand mb-0 h1">
                     Django Notes App
                 </span>
+
+                {% if user.is_authenticated %}
+
+                    <div class="d-flex align-items-center gap-3">
+
+                        <span class="text-white">
+                            Welcome, {{ user.username }}
+                        </span>
+
+                        <a href="/logout/" class="btn btn-danger btn-sm">
+                            Logout
+                        </a>
+
+                    </div>
+
+                {% endif %}
             </div>
         </nav>
 
