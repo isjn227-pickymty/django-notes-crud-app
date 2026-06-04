@@ -10,5 +10,7 @@ class NoteSerializer(serializers.ModelSerializer):
             'id',
             'title',
             'content',
-            'created_at'
+            'category',
+            'created_at',
+            'updated_at'
         ]

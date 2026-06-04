@@ -8,6 +8,7 @@ from rest_framework.response import Response
 from .serializers import NoteSerializer
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import permission_classes
+from django.db.models import Q
 
 def home(request):
 
@@ -154,8 +155,43 @@ def notes_api(request):
 
     if request.method == 'GET':
         notes = Note.objects.filter(
-            user=request.user
-        )
+            user=request.user)
+        
+        category = request.GET.get('category', '').strip()
+        if category:
+            notes = notes.filter(
+                category__iexact=category
+            )
+
+        search_term = request.GET.get('search', '').strip()
+
+        if search_term:
+            notes = notes.filter(
+                Q(title__icontains = search_term)
+                |
+                Q(content__icontains = search_term)
+            )
+
+        sort = request.GET.get('sort', '').strip()
+
+        if sort == 'oldest':
+            notes = notes.order_by('created_at')
+        elif sort == 'newest':
+            notes = notes.order_by('-created_at')
+        elif sort == 'recently_updated':
+            notes = notes.order_by('-updated_at')
+            
+        page = request.GET.get('page', '1').strip()
+        PAGE_SIZE = 5
+
+        try:
+            page = int(page)
+        except:
+            page = 1
+        if page < 1:
+            page = 1
+
+        notes = notes[PAGE_SIZE*(page-1) : PAGE_SIZE*(page)]
 
         serializer = NoteSerializer(
             notes,
